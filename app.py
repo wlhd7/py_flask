@@ -1,4 +1,4 @@
-from flask import Flask, url_for
+from flask import Flask, url_for, request
 from markupsafe import escape
 
 app = Flask(__name__)
@@ -36,9 +36,38 @@ def about():
     return 'The about page'
 
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    return 'login'
+    if request.method == 'POST':
+        return do_the_login()
+    else:
+        return show_the_login_from()
+
+
+def do_the_login():
+    return 'do the login from'
+
+
+def show_the_login_from():
+    return 'show the login from'
+
+
+@app.get('/register')
+def register_get():
+    return show_the_register_from()
+
+
+@app.post('/register')
+def register_post():
+    return do_the_register()
+
+
+def show_the_register_from():
+    return 'show the register from'
+
+
+def do_the_register():
+    return 'fo the register'
 
 
 @app.route('/user/<username>')
