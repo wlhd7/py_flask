@@ -14,5 +14,17 @@ def hello(name):
     return f"hello {escape(name)}"
 
 
+@app.route('/post/<int:post_id>')
+def show_post(post_id):
+    return f'Post {post_id}'
+
+
+@app.route('/path/<path:subpath>')
+def show_subpath(subpath):
+    return f'Subpath {escape(subpath)}'
+    return f'Subpath {subpath}'
+# /path/<script>alert("injection attack")</script>
+
+
 if __name__ == "__main__":
     app.run(debug=True)
