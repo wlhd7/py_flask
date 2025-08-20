@@ -1,8 +1,10 @@
-from flask import Flask, request
+from flask import Flask, make_response, render_template
 
 app = Flask(__name__)
 
 
-with app.test_request_context('/hello', method='POST'):
-    assert request.path == '/hello'
-    assert request.method == 'POST'
+@app.route('/')
+def index():
+    resp = make_response(render_template('index.j2'))
+#    resp.set_cookie('username', 'wlhd')
+    return resp
