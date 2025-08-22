@@ -1,26 +1,35 @@
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, render_template
+from datetime import datetime
 
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/counter')
 def counter():
-    # 使用 get() 方法，如果 visits 不存在，不会报错，并给 visits 赋值: 0
-    count = int(request.cookies.get('visits', 0)) + 1
-    resp = make_response(f'''
-        <p>You have visit this site {count} times</p>
-        <a href="/reset">Reset Counter</a>
-    ''')
-    resp.set_cookie('visits', str(count))
+    visit_count = int(request.cookies.get('visits', 0)) + 1
+    time_now = datetime.now().strftime('%y-%m-%d %H:%M:%S')
+    first_time = request.cookies.get('first_time', 'this_time')
+    if first_time == 'this_time':
+        first_time = time_now
+    last_time = time_now
+
+    resp = make_response(render_template(
+        'counter.html',
+        visit_count=visit_count,
+        first_time=first_time,
+        last_time=last_time))
+
+    resp.set_cookie('visits', str(visit_count))
+    resp.set_cookie('first_time', first_time)
+    resp.set_cookie('last_time', last_time)
+
     return resp
 
 
-@app.route('/reset')
-def reset():
-    resp = make_response('''
-        <p>Counter has been reset</p>
-        <a href="/">Restart counter</a>
-    ''')
-    # 将名为 visits 的 cookie 的值设为空支付串，将过期时间设置为过去的时间（立即过期） == 立即删除该 cookie
+@app.route('/reset-counter')
+def reset_counter():
+    resp = make_response(render_template('reset.html'))
     resp.set_cookie('visits', '', expires=0)
+    resp.set_cookie('first_time', '', expires=0)
+    resp.set_cookie('last_time', '', expires=0)
     return resp
